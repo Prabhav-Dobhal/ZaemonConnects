@@ -30,18 +30,40 @@ import {
 import app from "../firebase";
 
 const registerSchema = yup.object().shape({
-  firstName: yup.string().required("required").min(2).max(12),
-  lastName: yup.string().required("required").min(2).max(12),
-  email: yup.string().email("invalid email").required("required").max(50),
-  password: yup.string().required("required").min(5),
+  firstName: yup
+    .string()
+    .required("required")
+    .min(2)
+    .max(12),
+  lastName: yup
+    .string()
+    .required("required")
+    .min(2)
+    .max(12),
+  email: yup
+    .string()
+    .email("invalid email")
+    .required("required")
+    .max(50),
+  password: yup
+    .string()
+    .required("required")
+    .min(5),
   location: yup.string().required("required"),
   occupation: yup.string().required("required"),
   picture: yup.string().required("required"),
 });
 
 const loginSchema = yup.object().shape({
-  email: yup.string().email("invalid email").required("required").max(50),
-  password: yup.string().required("required").min(5),
+  email: yup
+    .string()
+    .email("invalid email")
+    .required("required")
+    .max(50),
+  password: yup
+    .string()
+    .required("required")
+    .min(5),
 });
 
 const initialValues = {
@@ -159,6 +181,7 @@ const Form = () => {
   const login = async (values, onSubmitProps) => {
     values.email = values.email.toLowerCase();
     onSubmitProps.resetForm();
+    // console.log("Backend URL:", process.env.REACT_APP_BACKEND_URL);
     const loggedInResponse = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/auth/login`,
       {
@@ -189,16 +212,19 @@ const Form = () => {
     if (image) await uploadImage();
     setClicked(true);
     setOtpClick(true);
-    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/auth/register/otp`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: otpRef.current.values.email,
-        name: `${otpRef.current.values.firstName} ${otpRef.current.values.lastName}`,
-      }),
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_BACKEND_URL}/auth/register/otp`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: otpRef.current.values.email,
+          name: `${otpRef.current.values.firstName} ${otpRef.current.values.lastName}`,
+        }),
+      }
+    );
     const otp = await response.json();
     if (otp.error) {
       setClicked(false);
